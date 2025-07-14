@@ -1,5 +1,8 @@
+<?php
+include "application\db.php";
 class Route
 {
+
 	static function start()
 	{
 		// контроллер и действие по умолчанию
@@ -21,9 +24,12 @@ class Route
 		}
 
 		// добавляем префиксы
-		$model_name = 'Model_'.$controller_name;
-		$controller_name = 'Controller_'.$controller_name;
+		$model_name = $controller_name.'_model';
+		$controller_name = $controller_name.'_controller';
 		$action_name = 'action_'.$action_name;
+		// $model_name = $controller_name.'_model';
+		// $controller_name = $controller_name.'_controller';
+		// $action_name = $action_name.'_action';
 
 		// подцепляем файл с классом модели (файла модели может и не быть)
 
@@ -53,7 +59,6 @@ class Route
 		// создаем контроллер
 		$controller = new $controller_name;
 		$action = $action_name;
-		
 		if(method_exists($controller, $action))
 		{
 			// вызываем действие контроллера
@@ -74,4 +79,7 @@ class Route
 		header("Status: 404 Not Found");
 		header('Location:'.$host.'404');
     }
+}
+class sys {
+	static $PDO;
 }

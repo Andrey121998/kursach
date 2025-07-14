@@ -1,3 +1,4 @@
+<?php
 class View
 {
 	//public $template_view; // здесь можно указать общий вид по умолчанию.
