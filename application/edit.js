@@ -1,81 +1,64 @@
 $(function () {
-    // Обработка изменения статуса задачи
-    $(document).on('change', '.complete-task', function () {
-        var taskId = $(this).data('id');
-        var isCompleted = $(this).is(':checked') ? 1 : 0;
-        var taskElement = $(this).closest('li');
 
-        // Визуальное обновление
-        taskElement.toggleClass('task-completed', isCompleted);
-        taskElement.find('.task-title, .task-description').toggleClass('completed', isCompleted);
-
+    $('table td a.remove').click(function () {
+  
+      var kafedraId = $(this).closest('tr').attr('data-id');
+      var name = $(this).closest('tr').attr('data-name');
+  
+      Confirm('Удалить <i>' + name + '</i> ?', function () {
         $.ajax({
-            url: "/Main/update_task_status",
-            data: {
-                id: taskId,
-                implemented: isCompleted
-            },
-            type: "POST",
-            success: function (result) {
-                if (result.result != '1') {
-                    // Откатываем изменения если ошибка
-                    taskElement.toggleClass('task-completed');
-                    taskElement.find('.task-title, .task-description').toggleClass('completed');
-                    Message('Ошибка обновления. ' + (result.message || ''), 'danger');
-                }
-            },
-            error: function () {
-                taskElement.toggleClass('task-completed');
-                taskElement.find('.task-title, .task-description').toggleClass('completed');
-                Message('Ошибка соединения', 'danger');
+          url: ModulUrl + "/delete",
+          data: {kafedraId: kafedraId},
+          type: "POST",
+          success: function (result) {
+            if (result.result == '1') {
+              location.href = "/" + ModulUrl;
+            } else {
+              var message = result.message || '';
+              Message('Ошибка удаления. ' + message, 'danger');
             }
+          }
         });
+      });
+      return false;
     });
-
-    // Обработка изменения статуса подзадачи
-    $(document).on('change', '.complete-subtask', function () {
-        var subtaskId = $(this).data('id');
-        var taskId = $(this).data('task-id');
-        var isCompleted = $(this).is(':checked') ? 1 : 0;
-        var subtaskElement = $(this).closest('li');
-
-        // Визуальное обновление
-        subtaskElement.toggleClass('subtask-completed', isCompleted);
-        subtaskElement.find('.subtask-title, .subtask-description').toggleClass('completed', isCompleted);
-
-        $.ajax({
-            url: "/Main/update_subtask_status",
-            data: {
-                id: subtaskId,
-                implemented: isCompleted
-            },
-            type: "POST",
-            success: function (result) {
-                if (result.result != '1') {
-                    subtaskElement.toggleClass('subtask-completed');
-                    subtaskElement.find('.subtask-title, .subtask-description').toggleClass('completed');
-                    Message('Ошибка обновления подзадачи. ' + (result.message || ''), 'danger');
-                }
-            },
-            error: function () {
-                subtaskElement.toggleClass('subtask-completed');
-                subtaskElement.find('.subtask-title, .subtask-description').toggleClass('completed');
-                Message('Ошибка соединения', 'danger');
-            }
-        });
+  
+    $('.save').click(function () {
+      let btn = $(this)[0];
+  
+      document.querySelector('.needs-validation').classList.add('was-validated');
+  
+      if (!document.querySelector('#name').checkValidity()
+              ) {
+        return false;
+      }
+  
+      buttonDisable(btn);
+  
+      var kafedraId = $(this).attr('data-id');
+  
+      $.ajax({
+        url: "/" + ModulUrl + "/save",
+        data: {
+          kafedraId: kafedraId
+          , name: $('#name').val()
+          , aname: $('#aname').val()
+          , id: $('#id').val()
+        },
+        type: "POST",
+        success: function (result) {
+          if (result.result == '1') {
+            Message('Сохранено');
+            location.href = "/" + ModulUrl;
+          } else {
+            buttonEnable(btn);
+            var message = result.message || '';
+            Message('Ошибка сохранения. ' + message, 'danger');
+          }
+        }
+      });
+  
+      return false;
     });
-});
-
-function Message(text, type = 'success') {
-    var alertClass = type === 'danger' ? 'alert-danger' : 'alert-success';
-    var messageHtml = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert">' +
-                      text +
-                      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                      '</div>';
-
-    $('.alert-messages').html(messageHtml);
-    
-    setTimeout(function() {
-        $('.alert').alert('close');
-    }, 5000);
-}
+  
+  });

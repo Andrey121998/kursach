@@ -24,7 +24,6 @@ class Main_model extends Model
         ORDER BY 
             t.implemented, 
             t.priority, 
-            s.implemented,
             s.num
         ';
     $q = $GLOBALS['pdo']->prepare($sql);
@@ -32,22 +31,6 @@ class Main_model extends Model
     $return['Tusks'] = $q->fetchAll();
     return $return;
   }
-     public function update_task_status($taskId, $status)
-{
-    $sql = "UPDATE Tusk SET implemented = :status WHERE id = :id";
-    $q = $GLOBALS['pdo']->prepare($sql);
-    $q->bindValue(':status', $status, PDO::PARAM_INT);
-    $q->bindValue(':id', $taskId, PDO::PARAM_INT);
-    return $q->execute();
-}
-
-public function update_subtask_status($subtaskId, $status)
-{
-    $sql = "UPDATE Subtusk SET implemented = :status WHERE id = :id";
-    $q = $GLOBALS['pdo']->prepare($sql);
-    $q->bindValue(':status', $status, PDO::PARAM_INT);
-    $q->bindValue(':id', $subtaskId, PDO::PARAM_INT);
-    return $q->execute();
-}
+    
 
 }

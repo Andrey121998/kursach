@@ -1,4 +1,7 @@
-<h2 >To Do list</h2>  
+<?php 
+//sys::js('Contract.js');
+//phpinfo(); ?>  
+<h2 class="row g-3">To Do list</h2>  
 <p>
         Список ваших задач:
   </p>
@@ -6,53 +9,58 @@
   //var_dump($data);
    ?>
 <ul class="task-list">
-    <?php if (!empty($data['Tusks'])): ?>
+    <?php if (!empty($data['Tusks'])): // Проверяем, есть ли задачи ?>
         <?php
-        $currentTaskId = null;
+        $currentTaskId = null; // Переменная для отслеживания текущей задачи
         $countT = 0;
+        $countS = 0;
         foreach ($data['Tusks'] as $row) {
+            // Если это новая задача, выводим её
             if ($currentTaskId !== $row['id']) {
-                $countT++;
+              $countT++;
+              //$countS++;
                 if ($currentTaskId !== null) {
-                    echo '</ul></li>';
+                    // Закрываем предыдущий список подзадач, если он был открыт
+                    echo '</ul>';
                 }
+
+                // Обновляем текущую задачу
                 $currentTaskId = $row['id'];
-                ?>
-                <li data-id="<?= $row['id'] ?>" class="<?= $row['implemented'] ? 'task-completed' : '' ?>">
-                    <div class="task-header">
-                        <input type="checkbox" class="complete-task" data-id="<?= $row['id'] ?>" title="Выполнено" <?= $row['implemented'] ? 'checked' : '' ?>>
-                        <button class="edit-task" data-id="<?= $row['id'] ?>" title="Редактировать">✏️</button>
-                        <button class="delete-task" data-id="<?= $row['id'] ?>" title="Удалить">❌</button>
-                        <span class="task-title <?= $row['implemented'] ? 'completed' : '' ?>">
-                            <strong>Задача #<?= $countT ?></strong> - Приоритет: <?= $row['priority'] ?>
-                        </span>
-                    </div>
-                    <div class="task-description <?= $row['implemented'] ? 'completed' : '' ?>"><?= $row['description'] ?></div>
-                    <ul class="subtask-list">
-                <?php
+
+                // Выводим задачу
+                echo '<li>';
+                echo '<div class="task-header">';
+                echo '<input type="checkbox" class="complete-task" data-id="' . $row['id'] . '" title="Выполнено" ' . ($row['implemented'] ? 'checked' : '') . '>';
+                echo '<button class="edit-task" data-id="' . $row['id'] . '" title="Редактировать">✏️</button>';
+                echo '<button class="delete-task" data-id="' . $row['id'] . '" title="Удалить">❌</button>';
+                echo '<strong>Задача #' . $countT . '</strong> - Приоритет: ' . $row['priority'] . '<br>';
+                echo '</div>';
+                echo '<div class="task-description">' . $row['description'] . '</div>';
+                
+                echo '<ul class="subtask-list">'; // Открываем список подзадач
             }
 
+            // Если есть подзадача, выводим её
             if ($row['subtask_description']) {
-                ?>
-                <li data-id="<?= $row['subtask_id'] ?>" class="<?= $row['sub_implemented'] ? 'subtask-completed' : '' ?>">
-                    <div class="subtask-header">
-                        <input type="checkbox" class="complete-subtask" data-id="<?= $row['subtask_id'] ?>" data-task-id="<?= $row['id'] ?>" title="Выполнено" <?= $row['sub_implemented'] ? 'checked' : '' ?>>
-                        <button class="edit-subtask" data-id="<?= $row['subtask_id'] ?>" title="Редактировать">✏️</button>
-                        <button class="delete-subtask" data-id="<?= $row['subtask_id'] ?>" title="Удалить">❌</button>
-                        <span class="subtask-title <?= $row['sub_implemented'] ? 'completed' : '' ?>">
-                            Номер: <?= $row['num'] ?>
-                        </span>
-                    </div>
-                    <div class="subtask-description <?= $row['sub_implemented'] ? 'completed' : '' ?>"><?= $row['subtask_description'] ?></div>
-                </li>
-                <?php
+                echo '<li>';
+                echo '<div class="subtask-header">';
+                echo '<input type="checkbox" class="complete-subtask" data-id="' . $row['subtask_id'] . '" title="Выполнено" ' . ($row['sub_implemented'] ? 'checked' : '') . '>';
+                echo '<button class="edit-subtask" data-id="' . $row['subtask_id'] . '" title="Редактировать">✏️</button>';
+                echo '<button class="delete-subtask" data-id="' . $row['subtask_id'] . '" title="Удалить">❌</button>';
+                echo  ' Номер: ' . $row['num']. '<br>';
+                echo '</div>';
+                echo '<div class="subtask_descriptionn">' . $row['subtask_description'] . '</div>';
+                echo '</li>';
             }
         }
+
+        // Закрываем последний список подзадач, если он был открыт
         if ($currentTaskId !== null) {
-            echo '</ul></li>';
+            echo '</ul>'; // Закрываем список подзадач
+            echo '</li>'; // Закрываем последнюю задачу
         }
         ?>
-    <?php else: ?>
+    <?php else: // Если задач нет ?>
         <li>Задач пока нет.</li>
     <?php endif; ?>
 </ul>
