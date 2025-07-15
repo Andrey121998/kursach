@@ -83,7 +83,7 @@ class Main_model extends Model
     
     public function newTusk() {
     $return = array();
-    $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+    $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
      if (empty($id)) {
       $return['Tusk'] = array(
         'id' => '',
@@ -145,6 +145,76 @@ class Main_model extends Model
     return array('result' => $execute ? 1 : 0);
 }
   
+    public function newSubTusk() {
+    $return = array();
+    $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+     if (empty($id)) {
+      $return['Subtusk'] = array(
+        'id' => '',
+        'num' => '',
+        'description' => '',
+        'tuskId' => '',
+      );
+     } else {
+      $sql = 'SELECT id, num, description, tuskId FROM Subtusk WHERE id = :id';
+      $q =  $GLOBALS['pdo']->prepare($sql);
+      $q->execute(array('id' => $id));
+      $return['Subtusk'] = $q->fetch();
+     }
+     return $return;
+  }
+  
+  
+  
+  public function saveSubTusk() {
+    $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+    $num = isset($_POST['num']) ? (int)$_POST['num'] : 0;
+    $description = isset($_POST['description']) ? $_POST['description'] : '';
+    $tuskId = $_POST['tuskId'];
+
+    if (empty($id)) {
+        // Добавление новой записи
+        $sql = 'INSERT INTO Subtusk (
+                    num,
+                    description,
+                    tuskId
+                ) VALUES (
+                    :num,
+                    :description,
+                    :tuskId
+                )';
+
+        $q = $GLOBALS['pdo']->prepare($sql);
+        $execute = $q->execute(array(
+            'num' => $num,
+            'description' => $description,
+            'tuskId' => $tuskId
+        ));
+
+        if (!$execute) {
+            return array('result' => 0);
+        }
+
+        $id = $GLOBALS['pdo']->lastInsertId();
+    }
+
+    // Обновление существующей записи
+    $sql = 'UPDATE Subtusk SET 
+                num = :num,
+                tuskId = :tuskId,
+                description = :description
+            WHERE id = :id';
+
+    $q = $GLOBALS['pdo']->prepare($sql);
+    $execute = $q->execute(array(
+        'id' => $id,
+        'num' => $num,
+        'tuskId' => $tuskId,
+        'description' => $description
+    ));
+
+    return array('result' => $execute ? 1 : 0);
+}
     
 
 }

@@ -42,4 +42,16 @@ class Main_controller extends Controller
 		$data = $this->model->saveTusk();
 		$this->view->generate('', 'ajax_view_json.php', $data);
 	}
+
+	function action_newSubTusk() {
+		
+		$data = $this->model->newSubTusk();
+		$this->view->generate('', 'ajax_view_json.php', $data);
+	}
+
+	function action_saveSubTusk() {
+		
+		$data = $this->model->saveSubTusk();
+		$this->view->generate('', 'ajax_view_json.php', $data);
+	}
 }

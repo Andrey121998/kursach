@@ -29,7 +29,7 @@
                 echo '<li>';
                 echo '<div class="tusk-header" data-id="' . $row['id'] . '">';
                 echo '<input type="checkbox" class="complete-tusk" data-id=" ' . $row['id'] . '" title="Выполнено" ' . ($row['implemented'] ? 'checked' : '') . ' >';
-                echo '<button class="edit-tusk" data-id="' . $row['id'] . '"onclick="editTusk(' . $row['id'] . ')" data-bs-toggle="modal" data-bs-target="#editTuskModal"  title="Редактировать">✏️</button>';
+                echo '<button type="button" class="btn btn-link edit-btn" data-id="' . $row['id'] . '" title="Редактировать">✏️</button>';
                 echo '<button class="delete-tusk" data-id="' . $row['id'] . '" title="Удалить">❌</button>';
                 echo '<strong>Задача #' . $countT . '</strong> - Приоритет: ' . $row['priority'] . '<br>';
                 echo '</div>';
@@ -41,16 +41,18 @@
             // Если есть подзадача, выводим её
             if ($row['subtusk_description']) {
                 echo '<li>';
-                echo '<div class="subtusk-header">';
+                echo '<div class="tuskId ='.$currentTuskId .'">';
                 echo '<input type="checkbox" class="complete-subtusk" data-id=" ' . $row['subtusk_id'] . '" title="Выполнено" ' . ($row['sub_implemented'] ? 'checked' : '') . ' >';
-                echo '<button class="edit-subtusk" data-id="' . $row['subtusk_id'] . '" title="Редактировать">✏️</button>';
+                echo '<button type="button" class="btn btn-link subEdit-btn" data-id="' . $row['subtusk_id'] . '" title="Редактировать">✏️</button>';
                 echo '<button class="delete-subtusk" data-id="' . $row['subtusk_id'] . '" title="Удалить">❌</button>';
                 echo  ' Номер: ' . $row['num']. '<br>';
                 echo '</div>';
                 echo '<div class="subtusk_description">Описание: ' . $row['subtusk_description'] . '</div>';
                 echo '</li>';
             }
-             echo '<button class="add-subtusk"  title="Добавить подзадачу" style="font-size: 12px; color: green; background: none; border: none; cursor: pointer;">➕</button>';
+             echo '<button type="button" onclick="editSubTusk(0)" class="tuskId ='.$currentTuskId .'">
+                    ➕
+                    </button>';
         }
 
         // Закрываем последний список подзадач, если он был открыт
@@ -65,13 +67,15 @@
 </ul>
 
 
-<button type="button" data-bs-toggle="modal" onclick="editTusk(0)" data-bs-target="#editTuskModal" class="btn btn-primary col-md-2">➕ Добавить задачу</button>
+<button type="button" onclick="editTusk(0)" class="btn btn-primary col-md-2">
+    ➕ Добавить задачу
+</button>
 
  <div class="modal fade bd-example-modal-lg" id="editTuskModal" tabindex="-1" aria-labelledby="editTuskModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Заказчик</h5>
+              <h5 class="modal-title">Задача</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -102,6 +106,39 @@
         </div>
       </div>
 
-
+      <div class="modal fade bd-example-modal-lg" id="editSubTuskModal" tabindex="-1" aria-labelledby="editSubTuskModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Подзадача</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <form class="row g-2 needs-validation-customer" novalidate="">
+              <div class="row g-2">
+                  <div class="col-md-6">
+                    <label for="num" class="form-label required">Номер</label>
+                    <input class="form-control" id="num" type="text" pattern="[0-9]*" required>
+                    <div class="invalid-feedback">
+                      Введите значение
+                    </div>
+                  </div>
+                  <div class="col-md-6 ml-auto">
+                    <label for="subtusk_description" class="form-label required">Описание</label>
+                    <input class="form-control" id="subtusk_description" required>
+                    <div class="invalid-feedback">
+                      Введите значение
+                    </div>
+                  </div>
+                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button id="btSaveSubTusk" type="button" class="btn btn-primary">Сохранить</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       
